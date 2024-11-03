@@ -8,11 +8,11 @@ _default:
 
 # Generate everything
 [group("generators")]
-gen-all: gen-json-schema gen-shacl gen-docs show-output
+gen-all: clean gen-json-schema gen-ld gen-docs show-output
 
 # Generate JSON Schema
 [group("generators")]
-gen-json-schema: clean
+gen-json-schema:
     @echo "Generating JSON Schema…"
     @echo -en "\t"
     mkdir -p "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR"/json_schema
@@ -20,16 +20,16 @@ gen-json-schema: clean
     linkml generate json-schema \
         --not-closed \
         "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA" \
-        > "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR/json_schema/$DP_CAPACITY_HEATMAP_PROJECT_NAME.json_schema.json"
+        > "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR/json_schema/$DP_CAPACITY_HEATMAP_PROJECT_FILENAME.json_schema.json"
     @echo -n "… "
     @echo "OK."
     @echo
-    @echo -e "Generated JSON Schema at: $DP_CAPACITY_HEATMAP_SCHEMAS_DIR/json_schema/$DP_CAPACITY_HEATMAP_PROJECT_NAME.json_schema.json"
+    @echo -e "Generated JSON Schema at: $DP_CAPACITY_HEATMAP_SCHEMAS_DIR/json_schema/$DP_CAPACITY_HEATMAP_PROJECT_FILENAME.json_schema.json"
     @echo
 
 # Generate MkDocs files
 [group("generators")]
-_gen-mkdocs: clean
+_gen-mkdocs:
     @echo "Generating MkDocs files…"
     @echo -en "\t"
     mkdir -p "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR"/mkdocs
@@ -69,20 +69,36 @@ serve-docs:
 
 # Generate SHACL
 [group("generators")]
-gen-shacl: clean
+gen-shacl:
     @echo "Generating SHACL model…"
     @echo -en "\t"
-    mkdir -p "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR"/shacl
+    mkdir -p "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR"/linked_data
     @echo -en "\t"
     linkml generate shacl \
         --closed \
         --format ttl \
         "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA" \
-        > "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR/shacl/$DP_CAPACITY_HEATMAP_PROJECT_NAME.shacl.ttl"
+        > "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR/linked_data/$DP_CAPACITY_HEATMAP_PROJECT_FILENAME.shacl.ttl"
     @echo -n "… "
     @echo "OK."
     @echo
-    @echo -e "Generated SHACL model at: $DP_CAPACITY_HEATMAP_SCHEMAS_DIR/shacl/$DP_CAPACITY_HEATMAP_PROJECT_NAME.shacl.ttl"
+    @echo -e "Generated SHACL model at: $DP_CAPACITY_HEATMAP_SCHEMAS_DIR/linked_data/$DP_CAPACITY_HEATMAP_PROJECT_FILENAME.shacl.ttl"
+    @echo
+
+# Generate JSON-LD context
+[group("generators")]
+gen-json-ld-ctx:
+    @echo "Generating JSON-LD context…"
+    @echo -en "\t"
+    mkdir -p "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR"/linked_data
+    @echo -en "\t"
+    linkml generate jsonld-context \
+        "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA" \
+        > "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR/linked_data/$DP_CAPACITY_HEATMAP_PROJECT_FILENAME.json_ld_ctx.json"
+    @echo -n "… "
+    @echo "OK."
+    @echo
+    @echo -e "Generated JSON-LD context at: $DP_CAPACITY_HEATMAP_SCHEMAS_DIR/linked_data/$DP_CAPACITY_HEATMAP_PROJECT_FILENAME.json_ld_ctx.json"
     @echo
 
 # Clean up the output directory
@@ -123,7 +139,10 @@ deploy-docs:
     @echo
     @echo -e "Documentation site deployed at: $DP_CAPACITY_HEATMAP_DOCS_URL"
     @echo
-    
+
+# Generate Linked Data schemas.
+[group("generators")]
+gen-ld: gen-shacl gen-json-ld-ctx
 
 # Show class hierarchy in information model
 [group("schema")]
