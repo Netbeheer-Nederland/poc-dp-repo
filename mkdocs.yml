@@ -1,0 +1,26 @@
+site_name: Capacity Heatmap
+theme:
+  name: material
+  palette:
+    scheme: default
+    primary: indigo
+    accent: blue
+  features:
+    - content.tabs.link
+plugins:
+  - search
+markdown_extensions:
+  - pymdownx.betterem
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+nav:
+  - Index: index.md
+  - About: about.md
+site_url: https://netbeheer-nederland.github_org.github.io/dp-capacity-heatmap
+repo_url: https://github.com/netbeheer-nederland/dp-capacity-heatmap
+docs_dir: schemas/mkdocs
+site_dir: docs
+use_directory_urls: true

@@ -1,0 +1,45 @@
+= dp-capacity-heatmap
+
+== Python Environment and Dependencies
+
+=== Environment
+
+=== Dependencies
+
+* Dependencies are specified in `requirements.in`.
+* Used versions locked in `requirements.txt`.
+
+Both of these files conform to the https://pip.pypa.io/en/stable/reference/requirements-file-format/[`requirements.txt` format] (as per https://peps.python.org/pep-0508/[PEP 508].
+
+This format has been chosen due to its widespread adoption and simplicity. Moreover, it is suitable for both dependency specification and locking using a single format. This is great, since there is no standardized way for lockfiles in Python (and it will take a while with the rejection of https://peps.python.org/pep-0665/[PEP 665] which set out to solve this), leading to all sorts of tools having their own implementation. Using `requirements.txt` retains interoperability.
+
+[TIP]
+The lockfile is probably best generated in the GitHub Actions pipeline, as opposed to being checked in in Git.
+
+[NOTE] Why `pyproject.toml`?
+--
+This is not a Python project, as made clear by the fact that there is nothing to name or version. For this reason, a `pyproject.toml` file - besides offering much we do not need - is not suited.
+
+Moreover, although widely supported, the `pyproject.toml` (as standardized in PEP 621) is not as widely supported as the `requirements.txt` format.
+--
+
+==== Updating the lockfile
+
+The easiest way is to compile the `requirements.txt` file automatically using `uv`:
+
+[code,shell]
+....
+$ uv pip compile requirements.in -o requirements.txt
+....
+
+https://docs.astral.sh/uv/pip/compile/
+
+[TIP]
+There's bound to be other tools such as `pip-tools` that get this job done as well.
+
+'''
+
+[code]
+....
+$ source .env  # Make all environment variables available to current shell.
+....

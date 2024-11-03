@@ -1,0 +1,652 @@
+id: http://data.netbeheernederland.nl/capaciteitskaart/v1.0.0
+name: im-capaciteitskaart
+title: Information model for the NBNL-capaciteitskaart.
+version: 1.0.0
+description: |-
+  The capacity heatmaps information model was defined to cover a superset of
+  data exchanged by the NL system operators. A minimum set of data is defined
+  that all operators are expected to conform to, along with a number of
+  optional properties and data types.
+
+  ```mermaid
+  classDiagram
+  direction RL
+
+  class HeatmapDataSet {
+      string conforms_to
+      string contributor
+      string coverage
+      string creator
+      date date
+      string description
+      string format
+      string identifier
+      date issued
+      string language
+      string publisher
+      string rights
+      string title
+      date valid
+      EnergyArea energy_areas
+  }
+  class EnergyArea {
+      string short_code
+      integer demand_requests_in_queue
+      MegaW demand_capacity_in_queue
+      MegaW demand_quoted_capacity
+      MegaW demand_available_capacity
+      integer generation_requests_in_queue
+      MegaW generation_capacity_in_queue
+      MegaW generation_quoted_capacity
+      MegaW generation_available_capacity
+      Work works
+      PostcodeArea postcode_areas
+      string description
+      string m_rid
+      Name names
+  }
+  class Work {
+      date request_date_time
+      string work_order_number
+      WorkStatusKind status_kind
+      WorkTimeSchedule time_schedules
+      string type
+      string description
+      string m_rid
+      Name names
+  }
+  class PostcodeArea {
+      string postcode
+      RAGKind demand_constraint
+      RAGKind generation_constraint
+      string description
+      string m_rid
+      Name names
+  }
+
+  HeatmapDataSet --> EnergyArea : energy_areas
+  EnergyArea --> Work : works
+  EnergyArea --> PostcodeArea : postcode_areas
+  ```
+
+  The data is intended to be presented as a hierarchy with a
+  [HeatmapDataSet](HeatmapDataSet.md) at its root, followed by
+  [EnergyArea-s](EnergyArea.md) nested inside the *HeatmapDataSet*.
+  *EnergyArea-s* then have their own child elements.
+
+  This information model is based in part on the [LTDS Capacity Heatmap
+  Information
+  Model](https://www.ofgem.gov.uk/decision/long-term-development-statement-direction),
+  which itself is published under the [Open Government
+  License](http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/),
+  under ©Crown copyright 2024.
+
+  ## Additional schemas
+  * [JSON Schema](https://raw.githubusercontent.com/Netbeheer-Nederland/im-capaciteitskaart/main/project/jsonschema/im_capaciteitskaart.schema.json)
+  * [SHACL](https://raw.githubusercontent.com/Netbeheer-Nederland/im-capaciteitskaart/main/project/shacl/im_capaciteitskaart.shacl.ttl)
+  ## Identifiers
+license: Apache Software License 2.0
+see_also:
+  - https://Netbeheer-Nederland.github.io/im-capaciteitskaart
+imports:
+- linkml:types
+contributors:
+- github:ritger-alliander
+- github:sefanja
+prefixes:
+  linkml: https://w3id.org/linkml/
+  github: https://github.com/
+  cim: https://cim.ucaiug.io/ns#
+  ck: http://data.netbeheernederland.nl/capaciteitskaart/def#
+  nbnl: https://begrippen.netbeheernederland.nl/energiesysteembeheer/nl/page/
+  dcterms: http://purl.org/dc/terms/
+  unit: http://qudt.org/vocab/unit/
+default_curi_maps:
+- semweb_context
+default_prefix: ck
+default_range: string
+
+types:
+
+  MegaW:
+    typeof: integer
+    uri: unit:MegaW
+
+  KiloA:
+    typeof: integer
+    uri: unit:KiloA
+
+  KiloV:
+    typeof: integer
+    uri: unit:KiloV
+
+classes:
+
+  HeatmapDataSet:
+    description:
+      A single instance of a published dataset. The descriptions of these
+      fields are taken from the Dublin Core Standard.
+    attributes:
+      conformsTo:
+        description:
+          ID for the schema used to create the instance data.
+        slot_uri: dcterms:conformsTo
+        required: true
+      contributor:
+        description:
+          An entity responsible for making contributions to the resource.
+        slot_uri: dcterms:contributor
+        required: true
+      coverage:
+        description:
+          The spatial or temporal topic of the resource, spatial applicability
+          of the resource, or jurisdiction under which the resource is
+          relevant.
+        slot_uri: dcterms:coverage
+        required: true
+      creator:
+        description:
+          An entity responsible for making the resource.
+        slot_uri: dcterms:creator
+        required: true
+      date:
+        range: date
+        description:
+          A point of time associated with an event in the lifecycle of the
+          resource. For this implementation this will represent the date the
+          data set is valid from.
+        slot_uri: dcterms:date
+        required: true
+      description:
+        description:
+          An account of the resource.
+        slot_uri: dcterms:description
+        required: true
+      format:
+        description:
+          The file format of the resource.
+        slot_uri: dcterms:format
+        required: true
+      identifier:
+        description:
+          An unambiguous reference to the resource within a given context.
+        slot_uri: dcterms:identifier
+        required: true
+      issued:
+        range: date
+        description:
+          Date of formal issuance of the resource.
+        slot_uri: dcterms:issued
+        required: true
+      language:
+        description:
+          A language of the resource.
+        slot_uri: dcterms:language
+        required: true
+      publisher:
+        description:
+          An entity responsible for making the resource available.
+        slot_uri: dcterms:publisher
+        required: true
+      rights:
+        description:
+          Information about rights held in and over the resource.
+        slot_uri: dcterms:rights
+        required: true
+      title:
+        description:
+          A name given to the resource.
+        slot_uri: dcterms:title
+        required: true
+      valid:
+        range: date
+        description:
+          A date range for the validity of a resource. This should be two dates
+          to form a range.  The first date is inclusive and the second date
+          exclusive.
+        slot_uri: dcterms:valid
+        minimum_cardinality: 2
+        maximum_cardinality: 2
+      EnergyAreas:
+        range: EnergyArea
+        description:
+          A list of energy areas with heatmap data.
+        slot_uri: ck:HeatmapDataSet.EnergyAreas
+        multivalued: true
+    class_uri: ck:HeatmapDataSet
+
+  EnergyArea:
+    description:
+      Describes an area having energy production or consumption.
+      Specializations are intended to support the load allocation function as
+      typically required in energy management systems or planning studies to
+      allocate hypothesized load levels to individual load points for power
+      flow analysis. Often the energy area can be linked to both measured and
+      forecast load levels.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.LoadModel
+    is_a: IdentifiedObject
+    attributes:
+      shortCode:
+        description:
+          Short code name for EnergyArea. This is the *Uniek ID voedingsgebied*
+          in the previous implementation.
+        slot_uri: ck:EnergyArea.shortCode
+      demandRequestsInQueue:
+        range: integer
+        description:
+          Number of demand requests for new grid connections and capacity
+          increases in queue. This is the *Aantal unieke transportverzoeken in
+          een wachtrij - afname* in the previous implementation.
+        slot_uri: ck:EnergyArea.demandRequestsInQueue
+        required: false
+      demandCapacityInQueue:
+        range: MegaW
+        description:
+          The contract value of demand requests not yet granted. This is the
+          *Wachtrij in capaciteit - afname* in the previous implementation.
+        slot_uri: ck:EnergyArea.demandCapacityInQueue
+        required: false
+      demandQuotedCapacity:
+        range: MegaW
+        description:
+          Sum of all demand (in MW) currently quoted at the EnergyArea. This
+          is the *Benodigde transportcapaciteit (in MW) afname* in the previous
+          implementation.
+        slot_uri: ck:EnergyArea.demandQuotedCapacity
+      demandAvailableCapacity:
+        range: MegaW
+        description:
+          The available demand capacity (in MW) at the EnergyArea. The value
+          should reflect the capacity a network operator would make available
+          to a connecting party. This is the *Aanwezige transportcapaciteit (in
+          MW) afname huidige jaar* in the previous implementation.
+        slot_uri: ck:EnergyArea.demandAvailableCapacity
+        required: true
+      generationRequestsInQueue:
+        range: integer
+        description:
+          Number of generation requests for new grid connections and capacity
+          increases in queue. This is the *Aantal unieke transportverzoeken in
+          een wachtrij - invoeding* in the previous implementation.
+        slot_uri: ck:EnergyArea.generationRequestsInQueue
+        required: false
+      generationCapacityInQueue:
+        range: MegaW
+        description:
+          The contract value of generation requests not yet granted. This is
+          the *Wachtrij in capaciteit - invoeding* in the previous
+          implementation.
+        slot_uri: ck:EnergyArea.generationCapacityInQueue
+        required: false
+      generationQuotedCapacity:
+        range: MegaW
+        description:
+          Sum of all currently quoted generation (in MW) at the EnergyArea.
+          This is the *Benodigde transportcapaciteit (in MW) invoeding* in the
+          previous implementation.
+        slot_uri: ck:EnergyArea.generationQuotedCapacity
+      generationAvailableCapacity:
+        range: MegaW
+        description:
+          Available generation capacity (in MW) at the EnergyArea. This is the
+          *Aanwezige transportcapaciteit (in MW) invoeding huidige jaar* in the
+          previous implementation.
+        slot_uri: ck:EnergyArea.generationAvailableCapacity
+        required: true
+      Works:
+        range: Work
+        description:
+          All the works performed for this EnergyArea.
+        slot_uri: ck:EnergyArea.Works
+        multivalued: true
+      PostcodeAreas:
+        range: PostcodeArea
+        description:
+          Postcode Areas serviced by this EnergyArea.
+        slot_uri: ck:EnergyArea.PostcodeAreas
+        multivalued: true
+    exact_mappings:
+      - nbnl:voedingsgebied
+    class_uri: cim:EnergyArea
+
+  PostcodeArea:
+    description:
+      A geographic region that is defined by the initial letters or digits of a
+      postcode.
+    is_a: IdentifiedObject
+    attributes:
+      postcode:
+        description:
+          Identifier for the postcode area. Contain four (4) numbers, followed
+          by two (2) letters, uppercase. No spaces between the numbers and
+          letters, i.e. "1234AB".
+        slot_uri: ck:PostcodeArea.postcode
+        required: true
+      demandConstraint:
+        range: RAGKind
+        description:
+          A RAG definition of the demand constraints at the EnergyArea. A
+          utility should provide details on how this RAG status is calculated
+          as part of the accompanying documentation. This is the *Kleurcodering
+          van het postcodegebied voor afname* in the previous implementation.
+        slot_uri: ck:PostcodeArea.demandConstraint
+        required: true
+      generationConstraint:
+        range: RAGKind
+        description:
+          A RAG definition of the generation constraints at the EnergyArea. A
+          utility should provide details on how this RAG status is calculated
+          as part of the accompanying documentation. This is the *Kleurcodering
+          van het postcodegebied voor opwek* in the previous implementation.
+        slot_uri: ck:PostcodeArea.generationConstraint
+        required: true
+    class_uri: ck:PostcodeArea
+
+  Work:
+    description:
+      Document used to request, initiate, track and record work.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Work
+    is_a: BaseWork
+    attributes:
+      requestDateTime:
+        description: "Date and time work was requested.\r\n"
+        slot_uri: cim:Work.requestDateTime
+        range: date
+      workOrderNumber:
+        description:
+          Work order number (or other unique identifying information) for this
+          work.
+        slot_uri: cim:Work.workOrderNumber
+        range: string
+    class_uri: cim:Work
+
+  BaseWork:
+    description: Common representation for work and work tasks.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Work
+    is_a: Document
+    attributes:
+      statusKind:
+        description: Kind of work status.
+        slot_uri: cim:BaseWork.statusKind
+        range: WorkStatusKind
+        required: true
+      TimeSchedules:
+        description:
+          All time schedules for this work or work task.
+        slot_uri: cim:BaseWork.TimeSchedules
+        multivalued: true
+        range: WorkTimeSchedule
+        required: true
+    class_uri: cim:BaseWork
+
+  WorkTimeSchedule:
+    description:
+      Time schedule specific to work.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Work
+    is_a: TimeSchedule
+    attributes:
+      kind:
+        description:
+          Kind of this work schedule.
+        slot_uri: cim:WorkTimeSchedule.kind
+        range: WorkTimeScheduleKind
+        required: true
+    class_uri: cim:WorkTimeSchedule
+
+  Document:
+    description:
+      Parent class for different groupings of information collected and managed
+      as a part of a business process. It will frequently contain references to
+      other objects, such as assets, people and power system resources.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Common
+    is_a: IdentifiedObject
+    attributes:
+      type:
+        description:
+          Utility-specific classification of this document, according to its
+          corporate standards, practices, and existing IT systems (e.g., for
+          management of assets, maintenance, work, outage, customers, etc.).
+        slot_uri: cim:Document.type
+        range: string
+        required: false
+    class_uri: cim:Document
+
+  TimeSchedule:
+    description:
+      Description of anything that changes through time. Time schedule is used
+      to perform a single-valued function of time. Use inherited 'type'
+      attribute to give additional information on this schedule, such as
+      periodic (hourly, daily, weekly, monthly, etc.), day of the month, by
+      date, calendar (specific times and dates).
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968.Common
+    is_a: Document
+    attributes:
+      scheduleInterval:
+        description: Schedule date and time interval.
+        slot_uri: cim:TimeSchedule.scheduleInterval
+        range: DateTimeInterval
+        required: true
+    class_uri: cim:TimeSchedule
+
+  DateTimeInterval:
+    description:
+      Interval between two date and time points, where the interval includes
+      the start time but excludes end time.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Domain
+    attributes:
+      end:
+        description:
+          End date and time of this interval. The end date and time where the
+          interval is defined up to, but excluded.
+        slot_uri: cim:DateTimeInterval.end
+        range: date
+        required: true
+      start:
+        description:
+          Start date and time of this interval.  The start date and time is
+          included in the defined interval.
+        slot_uri: cim:DateTimeInterval.start
+        range: date
+        required: true
+    class_uri: cim:DateTimeInterval
+
+  EquipmentContainer:
+    description:
+      A modelling construct to provide a root class for containing equipment.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: ConnectivityNodeContainer
+    class_uri: cim:EquipmentContainer
+
+  Equipment:
+    description:
+      The parts of a power system that are physical devices, electronic or
+      mechanical.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: PowerSystemResource
+    attributes:
+      aggregate:
+        range: boolean
+        description:
+          True if the demand represents an aggregation of multiple demands all
+          connected at a single voltage level.
+        slot_uri: cim:Equipment.aggregate
+        required: true
+    class_uri: cim:Equipment
+
+  ConductingEquipment:
+    description:
+      The parts of the AC power system that are designed to carry current or
+      that are conductively connected through terminals.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: Equipment
+    class_uri: cim:ConductingEquipment
+
+  ConnectivityNodeContainer:
+    description:
+      A base class for all objects that may contain connectivity nodes or
+      topological nodes.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: PowerSystemResource
+    class_uri: cim:ConnectivityNodeContainer
+
+  PowerSystemResource:
+    description:
+      A power system resource (PSR) can be an item of equipment such as a
+      switch, an equipment container containing many individual items of
+      equipment such as a Substation, or an organisational entity such as
+      sub-control area.  Power system resources can have measurements
+      associated.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    is_a: IdentifiedObject
+    class_uri: cim:PowerSystemResource
+
+  IdentifiedObject:
+    description:
+      This is a root class to provide common identification for all classes
+      needing identification and naming attributes.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    attributes:
+      description:
+        description:
+          The description is a free human readable text describing or naming
+          the object. It may be non unique and may not correlate to a naming
+          hierarchy. This is the *Herkenbare naam voedingsgebied* in the
+          previous implementation.
+        slot_uri: cim:IdentifiedObject.description
+        range: string
+      mRID:
+        description:
+          Master resource identifier issued by a model authority. The mRID is
+          unique within an exchange context. Global uniqueness is easily
+          achieved by using a UUID, as specified in RFC 4122, for the mRID. The
+          use of UUID is strongly recommended. For CIMXML data files in RDF
+          syntax conforming to IEC 61970-552, the mRID is mapped to rdf:ID or
+          rdf:about attributes that identify CIM object elements.
+        slot_uri: cim:IdentifiedObject.mRID
+        range: string
+      Names:
+        description:
+          All names of this identified object.
+        slot_uri: cim:IdentifiedObject.Names
+        multivalued: true
+        range: Name
+    class_uri: cim:IdentifiedObject
+
+  Name:
+    description:
+      The Name class provides the means to define any number of human readable
+      names for an object. A name is <b>not</b> to be used for defining
+      inter-object relationships. For inter-object relationships instead use
+      the object identification 'mRID'
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    attributes:
+      NameType:
+        description:
+          Type of this name.
+        slot_uri: cim:Name.NameType
+        range: NameType
+        required: true
+    class_uri: cim:Name
+
+  NameType:
+    description:
+      Type of name. Possible values for attribute 'name' are implementation
+      dependent but standard profiles may specify types. An enterprise may have
+      multiple IT systems each having its own local name for the same object,
+      e.g.  a planning system may have different names from an EMS. An object
+      may also have different names within the same IT system, e.g. localName
+      as defined in CIM version 14. The definition from CIM14 is The localName
+      is a human readable name of the object. It is a free text name local to a
+      node in a naming hierarchy similar to a file directory structure. A power
+      system related naming hierarchy may be Substation, VoltageLevel,
+      Equipment etc. Children of the same parent in such a hierarchy have names
+      that typically are unique among them.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    attributes:
+      description:
+        description:
+          Description of the name type.
+        slot_uri: cim:NameType.description
+      NameTypeAuthority:
+        description:
+          Authority responsible for managing names of this type.
+        slot_uri: cim:NameType.NameTypeAuthority
+        range: NameTypeAuthority
+    class_uri: cim:NameType
+
+  NameTypeAuthority:
+    description:
+      Authority responsible for creation and management of names of a given
+      type; typically an organization or an enterprise system.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61970.Base.Core
+    attributes:
+      description:
+        description:
+          Description of the name type authority.
+        slot_uri: cim:NameTypeAuthority.description
+        range: string
+    class_uri: cim:NameTypeAuthority
+
+enums:
+
+  RAGKind:
+    enum_uri: ck:RAGKind
+    description:
+      Traffic light colors coding scheme for categorising status.
+    permissible_values:
+      transparant:
+        meaning: ck:RAGKind.Transparant
+      red:
+        meaning: ck:RAGKind.Red
+      amber:
+        meaning: ck:RAGKind.Amber
+      green:
+        meaning: ck:RAGKind.Green
+
+  WorkStatusKind:
+    description: Kind of status, specific to work.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968
+    enum_uri: cim:WorkStatusKind
+    permissible_values:
+      approved:
+        meaning: cim:WorkStatusKind.approved
+      cancelled:
+        meaning: cim:WorkStatusKind.cancelled
+      closed:
+        meaning: cim:WorkStatusKind.closed
+      completed:
+        meaning: cim:WorkStatusKind.completed
+      dispatched:
+        meaning: cim:WorkStatusKind.dispatched
+      enroute:
+        meaning: cim:WorkStatusKind.enroute
+      inProgress:
+        meaning: cim:WorkStatusKind.inProgress
+      onSite:
+        meaning: cim:WorkStatusKind.onSite
+      scheduled:
+        meaning: cim:WorkStatusKind.scheduled
+      waitingOnApproval:
+        meaning: cim:WorkStatusKind.waitingOnApproval
+      waitingOnMaterial:
+        meaning: cim:WorkStatusKind.waitingOnMaterial
+      waitingToBeScheduled:
+        meaning: cim:WorkStatusKind.waitingToBeScheduled
+
+  WorkTimeScheduleKind:
+    description: Kind of work schedule.
+    from_schema: https://cim.ucaiug.io/ns#TC57CIM.IEC61968
+    enum_uri: cim:WorkTimeScheduleKind
+    permissible_values:
+      actual:
+        meaning: cim:WorkTimeScheduleKind.actual
+      earliest:
+        meaning: cim:WorkTimeScheduleKind.earliest
+      estimate:
+        meaning: cim:WorkTimeScheduleKind.estimate
+      immediate:
+        meaning: cim:WorkTimeScheduleKind.immediate
+      latest:
+        meaning: cim:WorkTimeScheduleKind.latest
+      request:
+        meaning: cim:WorkTimeScheduleKind.request
