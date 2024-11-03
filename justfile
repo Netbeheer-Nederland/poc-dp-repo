@@ -140,7 +140,7 @@ deploy-docs:
     @echo -e "Documentation site deployed at: $DP_CAPACITY_HEATMAP_DOCS_URL"
     @echo
 
-# Generate Linked Data schemas.
+# Generate Linked Data schemas
 [group("generators")]
 gen-ld: gen-shacl gen-json-ld-ctx
 
