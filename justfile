@@ -111,6 +111,17 @@ show-output:
 edit-schema:
     @${VISUAL:-${EDITOR:-nano}} "$DP_CAPACITY_HEATMAP_INFORMATION_MODEL_FILE"
 
+deploy-docs:
+    @echo "Publishing documentation site..."
+    @echo -en "\t"
+    mkdocs gh-deploy --config-file "${DP_CAPACITY_HEATMAP_MKDOCS_CONFIG}"
+    @echo -n "... "
+    @echo "OK."
+    @echo
+    @echo -e "Documentation site deployed at: $DP_CAPACITY_HEATMAP_DOCS_URL"
+    @echo
+    
+
 # Show class hierarchy in information model
 [group("schema")]
 q-schema-classes:
