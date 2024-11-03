@@ -8,28 +8,29 @@ _default:
 
 # Generate everything
 [group("generators")]
-gen-all: clean gen-json-schema gen-shacl gen-docs show-output
+gen-all: gen-json-schema gen-shacl gen-docs show-output
 
 # Generate JSON Schema
 [group("generators")]
 gen-json-schema: clean
-    @echo "Generating JSON Schema..."
+    @echo "Generating JSON Schema…"
     @echo -en "\t"
-    mkdir -p "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR"/json-schema
+    mkdir -p "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR"/json_schema
     @echo -en "\t"
     linkml generate json-schema \
         --not-closed \
         "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA" \
-    @echo -n "... "
+        > "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR/json_schema/$DP_CAPACITY_HEATMAP_PROJECT_NAME.json_schema.json"
+    @echo -n "… "
     @echo "OK."
     @echo
-    @echo -e "Generated JSON Schema at: $DP_CAPACITY_HEATMAP_SCHEMAS_DIR/json-schema/$DP_CAPACITY_HEATMAP_PROJECT_NAME.json"
+    @echo -e "Generated JSON Schema at: $DP_CAPACITY_HEATMAP_SCHEMAS_DIR/json_schema/$DP_CAPACITY_HEATMAP_PROJECT_NAME.json_schema.json"
     @echo
 
 # Generate MkDocs files
 [group("generators")]
 _gen-mkdocs: clean
-    @echo "Generating MkDocs files..."
+    @echo "Generating MkDocs files…"
     @echo -en "\t"
     mkdir -p "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR"/mkdocs
     @echo -en "\t"
@@ -43,7 +44,7 @@ _gen-mkdocs: clean
         --format markdown \
         --diagram-type er_diagram \
         "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA"
-    @echo -n "... "
+    @echo -n "… "
     @echo "OK."
     @echo
     @echo -e "Generated MkDocs files at: $DP_CAPACITY_HEATMAP_SCHEMAS_DIR/mkdocs/"
@@ -52,10 +53,10 @@ _gen-mkdocs: clean
 # Generate the documentation site
 [group("documentation")]
 gen-docs: _gen-mkdocs
-    @echo "Generating MkDocs site..."
+    @echo "Generating MkDocs site…"
     @echo -en "\t"
     mkdocs build --config-file "${DP_CAPACITY_HEATMAP_MKDOCS_CONFIG}"
-    @echo -n "... "
+    @echo -n "… "
     @echo "OK."
     @echo
     @echo -e "Generated documentation site at: $DP_CAPACITY_HEATMAP_DOCS_DIR"
@@ -69,7 +70,7 @@ serve-docs:
 # Generate SHACL
 [group("generators")]
 gen-shacl: clean
-    @echo "Generating SHACL model..."
+    @echo "Generating SHACL model…"
     @echo -en "\t"
     mkdir -p "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR"/shacl
     @echo -en "\t"
@@ -77,18 +78,18 @@ gen-shacl: clean
         --closed \
         --format ttl \
         "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA" \
-        > "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR/shacl/$DP_CAPACITY_HEATMAP_PROJECT_NAME.ttl"
-    @echo -n "... "
+        > "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR/shacl/$DP_CAPACITY_HEATMAP_PROJECT_NAME.shacl.ttl"
+    @echo -n "… "
     @echo "OK."
     @echo
-    @echo -e "Generated SHACL model at: $DP_CAPACITY_HEATMAP_SCHEMAS_DIR/shacl/$DP_CAPACITY_HEATMAP_PROJECT_NAME.ttl"
+    @echo -e "Generated SHACL model at: $DP_CAPACITY_HEATMAP_SCHEMAS_DIR/shacl/$DP_CAPACITY_HEATMAP_PROJECT_NAME.shacl.ttl"
     @echo
 
 # Clean up the output directory
 [group("general")]
 clean:
     @echo "Cleaning up project"
-    @echo -n "... "
+    @echo -n "… "
     @if [ -d "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR" ]; then \
         ( shopt -s dotglob; rm -rf "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR"/* ); \
     else \
@@ -111,11 +112,13 @@ show-output:
 edit-schema:
     @${VISUAL:-${EDITOR:-nano}} "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA"
 
+# Deploy documentation site.
+[group("documentation")]
 deploy-docs:
-    @echo "Publishing documentation site..."
+    @echo "Publishing documentation site…"
     @echo -en "\t"
     mkdocs gh-deploy --config-file "${DP_CAPACITY_HEATMAP_MKDOCS_CONFIG}"
-    @echo -n "... "
+    @echo -n "… "
     @echo "OK."
     @echo
     @echo -e "Documentation site deployed at: $DP_CAPACITY_HEATMAP_DOCS_URL"
