@@ -19,7 +19,7 @@ gen-json-schema: clean
     @echo -en "\t"
     linkml generate json-schema \
         --not-closed \
-        "$DP_CAPACITY_HEATMAP_INFORMATION_MODEL_FILE" \
+        "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA" \
     @echo -n "... "
     @echo "OK."
     @echo
@@ -42,7 +42,7 @@ _gen-mkdocs: clean
         --no-include-top-level-diagram \
         --format markdown \
         --diagram-type er_diagram \
-        "$DP_CAPACITY_HEATMAP_INFORMATION_MODEL_FILE"
+        "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA"
     @echo -n "... "
     @echo "OK."
     @echo
@@ -76,7 +76,7 @@ gen-shacl: clean
     linkml generate shacl \
         --closed \
         --format ttl \
-        "$DP_CAPACITY_HEATMAP_INFORMATION_MODEL_FILE" \
+        "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA" \
         > "$DP_CAPACITY_HEATMAP_SCHEMAS_DIR/shacl/$DP_CAPACITY_HEATMAP_PROJECT_NAME.ttl"
     @echo -n "... "
     @echo "OK."
@@ -109,7 +109,7 @@ show-output:
 # Edit the information model
 [group("schema")]
 edit-schema:
-    @${VISUAL:-${EDITOR:-nano}} "$DP_CAPACITY_HEATMAP_INFORMATION_MODEL_FILE"
+    @${VISUAL:-${EDITOR:-nano}} "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA"
 
 deploy-docs:
     @echo "Publishing documentation site..."
@@ -125,4 +125,4 @@ deploy-docs:
 # Show class hierarchy in information model
 [group("schema")]
 q-schema-classes:
-    yq '.classes.* | key' "$DP_CAPACITY_HEATMAP_INFORMATION_MODEL_FILE"
+    yq '.classes.* | key' "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA"
