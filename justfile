@@ -128,7 +128,7 @@ show-output:
 edit-schema:
     @${VISUAL:-${EDITOR:-nano}} "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA"
 
-# Deploy documentation site.
+# Deploy documentation site
 [group("documentation")]
 deploy-docs:
     @echo "Publishing documentation site…"
@@ -146,5 +146,10 @@ gen-ld: gen-shacl gen-json-ld-ctx
 
 # Show class hierarchy in information model
 [group("schema")]
-q-schema-classes:
+show-schema-classes:
     yq '.classes.* | key' "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA"
+
+# Show class hierarchy in information model
+[group("schema")]
+get-def uri:
+    @yq '.classes.* | select(.class_uri == "{{uri}}")' "$DP_CAPACITY_HEATMAP_LOGICAL_SCHEMA"
