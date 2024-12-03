@@ -1,4 +1,4 @@
-= dp-capacity-heatmap
+= poc-dp-repo
 
 == Python Environment and Dependencies
 
